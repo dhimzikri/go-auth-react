@@ -1,9 +1,8 @@
 import React from "react";
 import "./navbar-fixed.css";
 
-function Navbar({ userName }) {
+function Navbar({ userName, onLogout }) {
   const logout = async () => {
-    // Add async keyword here
     try {
       const response = await fetch(`http://localhost:8000/api/logout`, {
         method: "POST",
@@ -14,6 +13,7 @@ function Navbar({ userName }) {
       });
       if (response.ok) {
         console.log("Logout successful");
+        onLogout(); // Clear username on logout
       } else {
         console.error("Logout failed");
       }
@@ -23,7 +23,7 @@ function Navbar({ userName }) {
   };
 
   return (
-    <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark mb ">
+    <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark mb">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
           Home
@@ -31,13 +31,17 @@ function Navbar({ userName }) {
         <div>
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
             {userName ? (
-              <li className="nav-item">
-                <a className="nav-link" href="/login" onClick={logout}>
-                  Logout
-                </a>
-              </li>
+              <>
+                <li className="nav-item">
+                  <span className="nav-link">Welcome, {userName}</span>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="/login" onClick={logout}>
+                    Logout
+                  </a>
+                </li>
+              </>
             ) : (
-              
               <>
                 <li className="nav-item">
                   <a className="nav-link" href="/login">

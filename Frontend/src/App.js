@@ -10,38 +10,37 @@ import Navbar from "./components/Navbar";
 function App() {
   const [userName, setUserName] = useState("");
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:8000/api/user`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-        const responseData = await response.json();
-        if (response.ok) {
-          console.log(
-            "Received User Data",
-            responseData,
-            "name",
-            responseData.name
-          );
-          setUserName(responseData.name);
-        } else {
-          console.error("User Data not received");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        setUserName(responseData.name);
+      } else {
+        setUserName("");
+        console.error("User data not received");
       }
-    };
+    } catch (error) {
+      setUserName("");
+      console.error("Error fetching user data:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
+    setTimeout(()=> {
+      fetchUserData();
+    },2000);
   }, []);
   return (
     <div>
-      <Navbar userName={userName} />
+      <Navbar userName={userName} onLogout={() => setUserName("")} />
       <Router>
         <Routes>
           <Route path="/" element={<HomePage userName={userName} />} />
